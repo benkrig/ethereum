@@ -80,9 +80,9 @@ contract KYC {
 		External queryPerson
 		@description
 			Searches persons mapping for a specific Person with a given ID.
-		@params:
+		@params
 			_id (bytes) : ID of Person we are searching for
-		@return:
+		@return
 			(bytes) - The ID of the person we are searching for
 			(string) - JSONArray as a String of all InfoElements within Person
 	*/
@@ -95,11 +95,11 @@ contract KYC {
 	}
 	/*
 		External deletePerson
-		@description:
+		@description
 			Deletes Person with given ID from persons mapping.
-		@params:
+		@params
 			_id (bytes) : ID of Person we are deleting.
-		@return:
+		@return
 			(void)
 	*/
 	function deletePerson(bytes _id) external {
@@ -107,14 +107,14 @@ contract KYC {
 	}
 	/*
 		External updateInfoElement
-		@description: 
+		@description
 			Searches for an InfoElement belonging to _personid that has _elementid. 
 			If InfoElement with same ID is found, overwrites the info element, otherwise a new element is pushed into infoElements[]
 		
-		@params: 
+		@params
 			_personid (bytes) : ID of the Person we are searching for
 			_json (string) : _json is a STRINGIFIED JSON Object of an InfoElement e.g { "key" : "value" } -- NOT { key : "value" }
-		@return:
+		@return
 			(void)
 	*/
 	function updateInfoElement(bytes _personid, string _json) external {
@@ -139,12 +139,12 @@ contract KYC {
 	}
 	/*
 		External queryInfoElement
-		@description: 
+		@description
 			Determines if a specific person has a single, specific element, returns the value in a JSON String
-		@params:
+		@params
 			_personid (bytes) : ID of the Person we are searching within.
 			_elementid (string) : InfoElement.id of the InfoElement we are searching for within the Person struct.
-		@return:
+		@return
 			(string) : If _elementid is found, returns an InfoElement in JSON Format
 				If _elementid is NOT found, returns an empty JSON Object. " { } "
 	*/
@@ -168,14 +168,14 @@ contract KYC {
 	}
 	/*
 		External deleteInfoElements
-		@description:
+		@description
 			Deletes an InfoElement with a specific ID within a specific Person.
 				If _elementid IS FOUND, deletes the specific InfoElement and resizes array appropriately.
 				if _elementid NOT FOUND, does nothing.
-		@params:
+		@params
 			_personid (bytes) : ID of the Person we are searching within.
 			_elementid (string) : ID of the InfoElement we would like to delete.
-		@return:
+		@return
 			(void)
 	*/
 	function deleteInfoElement(bytes _personid, string _elementid) external {
@@ -220,7 +220,16 @@ contract KYC {
 
 		return ("");
 	}
-
+	/*
+		External saveRequestState
+		@description
+			Saves the a given _personid Person's State under a given _requestid
+		@params
+			_requestid (bytes) : ID of the SubmittedRequest to create.
+			_personid (bytes) : ID of the Person whose state to save.
+		@return
+			(void)
+	*/
 	function saveRequestState(bytes _requestid, bytes _personid) external {
 		SubmittedRequest request = submittedRequests[_requestid];
 		if( sha3(request.id) == sha3(_requestid) ) {
@@ -242,11 +251,11 @@ contract KYC {
 	*/
 	/*
 		Public getInfoElements
-		@description: 
+		@description
 			Retrieves all InfoElements belonging to a specific person and returns them as an JSON Array of JSON Objects.
-		@params:
+		@params
 			_personid (bytes) : ID of the Person we are searching within.
-		@return:
+		@return
 			(void)
 	*/
 	function getInfoElements(bytes _personid) public returns (string) {
@@ -281,12 +290,12 @@ contract KYC {
 	*/
 	/*
 		Internal stringifyInfoElement
-		@description:
+		@description
 			Retrieves a specific Person's InfoElement at a given index in (string) JSON Format.
-		@params: 
+		@params
 			_personid (bytes) : ID of Person we are retrieving from.
 			_index (uint): Specific index of infoElements to retrieve.
-		@return:
+		@return
 			(string) : Returns a string representation of an InfoElement as a JSON Object. 
 	*/
 	function stringifyInfoElement(bytes _personid, uint _index) internal returns (string) {
@@ -318,6 +327,15 @@ contract KYC {
 		return s;
 	}
 
+	/*
+		Internal stringifySubmittedRequest
+		@description
+			Returns the SubmittedRequest with _requestid.
+		@params
+			_requestid (bytes) : The SubmittedRequest.id to return.
+		@returns
+			(string) : String representation of SubmittedRequest object.
+	*/
 	function stringifySubmittedRequest(bytes _requestid) internal returns (string) {
 		string memory s = '{ id: "';
 		SubmittedRequest request = submittedRequests[_requestid];
@@ -333,17 +351,16 @@ contract KYC {
 		s = s.toSlice().concat('" }'.toSlice());
 
 		return s;
-
 	}
-
 	/*
 		Internal parseInfoElement
 		@description:
 			Takes a STRINGIFIED and JSON Formatted InfoElement, parses and returns a struct InfoElement
-		@params:
+		@params
 			_json (string) : The STRINGIFIED and JSON Formatted InfoElement to be parsed. 
-			E.g { "key" : "value" } -- NOT { key : "value" }
-		@return:
+				E.g { "key" : "value" } -- NOT { key : "value" }.
+				Additionally, _json must have elements in order shown below.
+		@return
 			(InfoElement) : The InfoElement created from _json.
 	*/
 	function parseInfoElement(string _json) internal returns (InfoElement) {
